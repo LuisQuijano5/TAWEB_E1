@@ -20,6 +20,7 @@ class PasswordResource {
                 'lower' => isset($_GET['includeLowercase']) ? filter_var($_GET['includeLowercase'], FILTER_VALIDATE_BOOLEAN) : true,
                 'digits' => isset($_GET['includeNumbers']) ? filter_var($_GET['includeNumbers'], FILTER_VALIDATE_BOOLEAN) : true,
                 'symbols' => isset($_GET['includeSymbols']) ? filter_var($_GET['includeSymbols'], FILTER_VALIDATE_BOOLEAN) : true,
+                'pattern' => $_GET['pattern'] ?? ''
             ];
 
             $password = PasswordGenerator::generate_password($length, $opts);
@@ -45,6 +46,7 @@ class PasswordResource {
             if (isset($input['includeNumbers'])) $opts['digits'] = (bool)$input['includeNumbers'];
             if (isset($input['includeSymbols'])) $opts['symbols'] = (bool)$input['includeSymbols'];
             if (isset($input['excludeAmbiguous'])) $opts['avoid_ambiguous'] = (bool)$input['excludeAmbiguous'];
+            if (isset($input['pattern'])) $opts['pattern'] = (string)$input['pattern']; 
 
             $passwords = PasswordGenerator::generate_passwords($count, $length, $opts);
             

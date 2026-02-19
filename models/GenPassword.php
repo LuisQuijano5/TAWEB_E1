@@ -68,6 +68,7 @@ class PasswordGenerator {
             'avoid_ambiguous' => true,
             'exclude' => '',
             'require_each' => true,
+            'pattern' => '',
         ], $opts);
 
         // Conjuntos de caracteres
@@ -111,6 +112,27 @@ class PasswordGenerator {
                 throw new InvalidArgumentException("Categoría vacía tras exclusiones.");
             }
             $sets[$k] = implode('', $filtered);
+        }
+
+        //para patron
+        if (!empty($opts['pattern'])) {
+            $result = '';
+            $chars = str_split($opts['pattern']);
+            
+            foreach ($chars as $char) {
+                if ($char === 'U' && isset($sets['upper'])) {
+                    $result .= $sets['upper'][self::secure_random_int_between(0, strlen($sets['upper']) - 1)];
+                } elseif ($char === 'l' && isset($sets['lower'])) {
+                    $result .= $sets['lower'][self::secure_random_int_between(0, strlen($sets['lower']) - 1)];
+                } elseif ($char === 'd' && isset($sets['digits'])) {
+                    $result .= $sets['digits'][self::secure_random_int_between(0, strlen($sets['digits']) - 1)];
+                } elseif ($char === 's' && isset($sets['symbols'])) {
+                    $result .= $sets['symbols'][self::secure_random_int_between(0, strlen($sets['symbols']) - 1)];
+                } else {
+                    $result .= $char; 
+                }
+            }
+            return $result; 
         }
 
         // crear pool total concatenado
