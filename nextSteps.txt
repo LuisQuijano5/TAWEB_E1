@@ -1,0 +1,27 @@
+CREAR ENV Y PONER LAS CREDENCIALES
+
+docker compose up -d --build
+
+docker exec -it api_exa1 composer install
+
+docker exec -it db_exa1 mysql -u  -p 
+
+CREATE TABLE urls (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    original_url TEXT NOT NULL,
+    short_code VARCHAR(10) NOT NULL UNIQUE,
+    creator_ip VARCHAR(45) NOT NULL,
+    uses_count INT DEFAULT 0,
+    max_uses INT NULL,
+    expires_at DATETIME NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE url_visits (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    url_id INT NOT NULL,
+    visit_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ip_address VARCHAR(45) NOT NULL,
+    user_agent TEXT NOT NULL,
+    FOREIGN KEY (url_id) REFERENCES urls(id) ON DELETE CASCADE
+);

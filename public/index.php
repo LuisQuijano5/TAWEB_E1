@@ -23,6 +23,9 @@ $router->addRoute('POST', '/password/validate', [$passRes, 'validate']);
 
 // exa 3
 $router->addRoute('POST', '/qr/generate', [$qrRes, 'generateTextOrUrl']);
+$router->addRoute('POST', '/qr/wifi', [$qrRes, 'generateWifi']);
+$router->addRoute('POST', '/qr/geo', [$qrRes, 'generateGeo']);
+$router->addRoute('POST', '/qr/email', [$qrRes, 'generateEmail']);
 
 // exa 2, hasta abajo por la ultima ruta
 $router->addRoute('POST', '/url/shorten', [$urlRes, 'shorten']);
