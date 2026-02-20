@@ -9,10 +9,14 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 RUN apt-get update && apt-get install -y \
     git \
     zip \
-    unzip
+    unzip \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev
 
-RUN docker-php-ext-install pdo pdo_mysql
-
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql gd
+    
 RUN a2enmod rewrite
 
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
