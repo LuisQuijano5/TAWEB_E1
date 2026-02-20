@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/UrlShortener.php';
 
-class UrlController {
+class UrlResource {
     private $model;
 
     public function __construct() {

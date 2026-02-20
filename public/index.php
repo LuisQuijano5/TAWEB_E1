@@ -2,33 +2,32 @@
 require_once __DIR__ . '/../core/Router.php';
 require_once __DIR__ . '/../res/PasswordResource.php';
 require_once __DIR__ . '/../res/UrlResource.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-//test nomas BORRAR DESPUES
+//test
 // require_once __DIR__ . '/../res/TestDB.php';
 // $testDB = new TestDB();
-// BORRAR
 
-$router = new Router('', '/api'); // se puede pooiner el v1 pero por lo que pide el pdf no lo pongo
-$passController = new PasswordResource();
-$urlController = new UrlController();
+$router = new Router('', '/api'); // se puede poner el v1 pero por lo que pide el pdf no lo pongo
+$passRes = new PasswordResource();
+$urlRes = new UrlResource();
 
 // exa 1
-$router->addRoute('GET', '/password', [$passController, 'generateSingle']);
-$router->addRoute('POST', '/passwords', [$passController, 'generateMultiple']);
-$router->addRoute('POST', '/password/validate', [$passController, 'validate']);
+$router->addRoute('GET', '/password', [$passRes, 'generateSingle']);
+$router->addRoute('POST', '/passwords', [$passRes, 'generateMultiple']);
+$router->addRoute('POST', '/password/validate', [$passRes, 'validate']);
 
 // exa 3
 
 
 // exa 2, hasta abajo por la ultima ruta
-$router->addRoute('POST', '/url/shorten', [$urlController, 'shorten']);
-$router->addRoute('GET', '/url/stats/{code}', [$urlController, 'stats']);
-$router->addRoute('GET', '/{code}', [$urlController, 'redirect']);
+$router->addRoute('POST', '/url/shorten', [$urlRes, 'shorten']);
+$router->addRoute('GET', '/url/stats/{code}', [$urlRes, 'stats']);
+$router->addRoute('GET', '/{code}', [$urlRes, 'redirect']);
 
-// Tests BORRARR
+// Tests
 // $router->addRoute('GET', '/test-db', [$testDB, 'checkConnection']);
 // $router->dispatch();
-// BORRAR
 
 $router->dispatch();
 
