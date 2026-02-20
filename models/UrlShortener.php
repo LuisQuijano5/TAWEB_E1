@@ -56,15 +56,26 @@ class UrlShortener {
     public function getStats($urlId) {
         $stmt = $this->conn->prepare("SELECT DATE(visit_date) as date, COUNT(*) as count FROM url_visits WHERE url_id = ? GROUP BY DATE(visit_date) ORDER BY date DESC");
         $stmt->execute([$urlId]);
-        $visitas = $stmt->fetchAll();
+        $visits_by_day = $stmt->fetchAll();
 
         $stmt2 = $this->conn->prepare("SELECT visit_date, ip_address, user_agent FROM url_visits WHERE url_id = ? ORDER BY visit_date DESC LIMIT 5");
         $stmt2->execute([$urlId]);
-        $ultimo = $stmt2->fetchAll();
+        $last_accesses = $stmt2->fetchAll();
 
         return [
-            'visitas_dia' => $visitas,
-            'ultimo_acceso' => $ultimo
+            'visits_by_day' => $visits_by_day,
+            'last_accesses' => $last_accesses
         ];
+    }
+
+    public function isRateLimited($ipAddress, $limit = 10, $minutes = 60) {
+        $sql = "SELECT COUNT(*) as total FROM urls WHERE creator_ip = ? AND created_at >= (NOW() - INTERVAL ? MINUTE)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(1, $ipAddress);
+        $stmt->bindValue(2, $minutes, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $row = $stmt->fetch();
+        return $row['total'] >= $limit;
     }
 }

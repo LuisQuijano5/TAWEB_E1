@@ -22,8 +22,29 @@ class UrlController {
         }
 
         $originalUrl = $input['original_url'];
+        $creatorIp = $_SERVER['REMOTE_ADDR'];
+        if ($this->model->isRateLimited($creatorIp, 10, 60)) {
+            $this->sendJSON(['error' => 'Demasiadas peticionesss'], 429);
+        }
         if (strpos($originalUrl, $_SERVER['HTTP_HOST']) !== false) {
-            $this->sendJSON(['error' => 'No puedes acortar una URL generada por este dominio'], 400);
+            $this->sendJSON(['error' => 'No puedes acortar una URL generada por este dominio (Bucle)'], 400);
+        }
+
+        $scheme = parse_url($originalUrl, PHP_URL_SCHEME);
+        if (!in_array($scheme, ['http', 'https'])) {
+            $this->sendJSON(['error' => 'solo URLs con http:// o https://'], 400);
+        }
+
+        $blacklist = ['phishing', 'malware', 'hack', 'virus'];
+        foreach ($blacklist as $badWord) {
+            if (stripos($originalUrl, $badWord) !== false) {
+                $this->sendJSON(['error' => 'La URL contiene patrones feos'], 400);
+            }
+        }
+
+        //la de caracteres
+        if (preg_match('/[<>\{\}\s\|\\\\]/', $originalUrl)) {
+            $this->sendJSON(['error' => 'La URL contiene caracteres feos'], 400);
         }
 
         $expiresAt = $input['expires_at'] ?? null; 
